@@ -135,11 +135,29 @@ func (ws *WebServer) handleSessionsAPI(w http.ResponseWriter, r *http.Request) {
 	var upcomingSavingSessions []SavingSession
 	var upcomingFreeElectricitySessions []FreeElectricitySession
 	
-	// Filter saving sessions
+	// Filter saving sessions (show joined sessions, and any available upcoming sessions)
+	joinedMap := make(map[int]bool)
 	if sessions != nil && sessions.Data.SavingSessions.Account.JoinedEvents != nil {
 		for _, session := range sessions.Data.SavingSessions.Account.JoinedEvents {
+			joinedMap[session.EventID] = true
 			if session.EndAt.After(now) {
+				session.Joined = true
 				upcomingSavingSessions = append(upcomingSavingSessions, session)
+			}
+		}
+	}
+	if sessions != nil && sessions.Data.SavingSessions.Events != nil {
+		for _, event := range sessions.Data.SavingSessions.Events {
+			if event.EndAt.After(now) && !joinedMap[event.ID] {
+				upcomingSavingSessions = append(upcomingSavingSessions, SavingSession{
+					EventID:    event.ID,
+					Code:       event.Code,
+					StartAt:    event.StartAt,
+					EndAt:      event.EndAt,
+					OctoPoints: event.RewardPerKwhInOctoPoints,
+					Status:     event.Status,
+					Joined:     false,
+				})
 			}
 		}
 	}
