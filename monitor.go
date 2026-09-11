@@ -380,8 +380,8 @@ func (m *SavingSessionMonitor) checkSavingSessions() bool {
 						m.logger.UserMessage("   ✅ Successfully joined session!")
 					}
 					joinedMap[session.EventID] = true
-					m.state.KnownSessions[session.EventID] = true
 				}
+				m.state.KnownSessions[session.EventID] = true
 			} else {
 				m.logger.Info("Skipped session - insufficient points",
 					"event_id", session.EventID,
@@ -564,7 +564,7 @@ func (m *SavingSessionMonitor) displayCampaignStatus() {
 }
 
 func (m *SavingSessionMonitor) shouldJoinSession(session SavingSession) bool {
-	return session.OctoPoints >= m.minPointsThreshold
+	return session.OctoPoints > 0 && session.OctoPoints >= m.minPointsThreshold
 }
 
 func (m *SavingSessionMonitor) joinSession(eventID int, eventCode string) error {
