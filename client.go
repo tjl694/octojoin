@@ -992,9 +992,9 @@ func (c *OctopusClient) getOctoPointsGraphQL() (int, error) {
 		c.debugLog("  - %s", campaign.Slug)
 	}
 
-	// Get the current balance (latest entry in chronological ledger)
+	// Get the current balance (first/newest entry in reverse-chronological ledger)
 	if len(result.Data.LoyaltyPointLedgers) > 0 {
-		pointsStr := result.Data.LoyaltyPointLedgers[len(result.Data.LoyaltyPointLedgers)-1].BalanceCarriedForward
+		pointsStr := result.Data.LoyaltyPointLedgers[0].BalanceCarriedForward
 		points, err := strconv.Atoi(pointsStr)
 		if err != nil {
 			c.debugLog("Failed to convert points string '%s' to int: %v", pointsStr, err)
