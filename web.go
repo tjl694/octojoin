@@ -833,7 +833,7 @@ func (ws *WebServer) handleDashboard(w http.ResponseWriter, r *http.Request) {
                                 <div class="session">
                                     <div class="session-date">${formatDate(session.startAt)}</div>
                                     <div class="session-details">
-                                        Duration: ${formatDuration(duration)} | Points: ${points}${joinedBadge}
+                                        Duration: ${formatDuration(duration)} | Points: ${points} / kWh${joinedBadge}
                                     </div>
                                     <div class="session-countdown" data-target="${session.startAt}"></div>
                                 </div>
