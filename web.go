@@ -827,11 +827,13 @@ func (ws *WebServer) handleDashboard(w http.ResponseWriter, r *http.Request) {
                     } else {
                         newSavingContent = data.saving_sessions.map(session => {
                             const duration = Math.floor((new Date(session.endAt) - new Date(session.startAt)) / (1000 * 60));
+                            const points = session.octoPoints !== undefined ? session.octoPoints : (session.octopoints !== undefined ? session.octopoints : 0);
+                            const joinedBadge = session.joined ? ' | <span style="color: #4ade80; font-weight: bold;">Joined</span>' : '';
                             return ` + "`" + `
                                 <div class="session">
                                     <div class="session-date">${formatDate(session.startAt)}</div>
                                     <div class="session-details">
-                                        Duration: ${formatDuration(duration)} | Points: ${session.octoPoints}
+                                        Duration: ${formatDuration(duration)} | Points: ${points}${joinedBadge}
                                     </div>
                                     <div class="session-countdown" data-target="${session.startAt}"></div>
                                 </div>

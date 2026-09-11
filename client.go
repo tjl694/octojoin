@@ -91,7 +91,7 @@ type SavingSession struct {
 	Code       string    `json:"code,omitempty"`
 	StartAt    time.Time `json:"startAt"`
 	EndAt      time.Time `json:"endAt"`
-	OctoPoints int       `json:"octopoints"`
+	OctoPoints int       `json:"octoPoints"`
 	Status     string    `json:"status,omitempty"`
 	Joined     bool      `json:"joined,omitempty"`
 }
@@ -775,13 +775,22 @@ func (c *OctopusClient) getSavingSessionsGraphQL() (*SavingSessionsResponse, err
 	var respModel SavingSessionsResponse
 	respModel.Data.SavingSessions.Account.HasJoinedCampaign = result.Data.SavingSessions.Account.HasJoinedCampaign
 	respModel.Data.SavingSessions.Events = result.Data.SavingSessions.Events
+
+	eventMap := make(map[int]SavingSessionEvent)
+	for _, e := range result.Data.SavingSessions.Events {
+		eventMap[e.ID] = e
+	}
+
 	for _, j := range result.Data.SavingSessions.Account.JoinedEvents {
+		ev := eventMap[j.EventID]
 		respModel.Data.SavingSessions.Account.JoinedEvents = append(respModel.Data.SavingSessions.Account.JoinedEvents, SavingSession{
-			EventID: j.EventID,
-			StartAt: j.StartAt,
-			EndAt:   j.EndAt,
-			Status:  j.EventStatus,
-			Joined:  true,
+			EventID:    j.EventID,
+			Code:       ev.Code,
+			StartAt:    j.StartAt,
+			EndAt:      j.EndAt,
+			OctoPoints: ev.RewardPerKwhInOctoPoints,
+			Status:     j.EventStatus,
+			Joined:     true,
 		})
 	}
 
